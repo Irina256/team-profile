@@ -2,8 +2,8 @@ const { writeFile, copyFile } = require("./utils/generate-site.js");
 const inquirer = require("inquirer");
 
 const generatePage = require("./src/page-template.js");
-
-const promptManager = () => {
+const employees = [];
+const promptManager = (manager) => {
   return inquirer.prompt([
     {
       type: "input",
@@ -34,20 +34,41 @@ const promptManager = () => {
       message: "What is your office number?",
     },
   ]);
+  employees.push(manager).then(positionInfo);
 };
 
-const promptTeam = (teamData) => {
+const promptTeam = (team) => {
   console.log(`
 =================
-Add Engineer or Intern
+Add Engineer 
 =================
 `);
 
-  // If there's no 'projects' array property, create one
-  if (!teamData.members) {
-    teamData.members = [];
-  }
-
+  return inquirer.prompt([
+    {
+      type: "input",
+      name: "name2",
+      message: "Please provide member's first name",
+    },
+    {
+      type: "input",
+      name: "id",
+      message: "What is his ID?",
+    },
+    {
+      type: "input",
+      name: "email",
+      message: "What is your team member's email address?",
+    },
+    {
+      type: "input",
+      name: "github",
+      message: "What is team member's github?",
+    },
+  ]);
+  employees.push(team).then(positionInfo);
+};
+const positionInfo = (positionInfo) => {
   return inquirer
     .prompt([
       {
@@ -55,50 +76,55 @@ Add Engineer or Intern
         name: "positions",
         message:
           "Who would you like to add next?(Use arrow Down/Up keys to select)",
-        choices: ["Engeneer", "Intern", "Noone"],
-      },
-      {
-        type: "input",
-        name: "name2",
-        message: "Please provide member's first name",
-      },
-      {
-        type: "input",
-        name: "id",
-        message: "What is his ID?",
-      },
-      {
-        type: "input",
-        name: "email",
-        message: "What is your team member's email address?",
-      },
-      {
-        type: "input",
-        name: "github",
-        message: "What is team member's github?",
-      },
-      {
-        type: "confirm",
-        name: "confirmAddMember",
-        message: "Would you like to add another member?",
-        default: false,
+        choices: ["Engineer", "Intern", "Noone"],
       },
     ])
+
     .then((memberInfo) => {
-      teamData.members.push(memberInfo);
-      if (memberInfo.confirmAddMember) {
-        return promptTeam(teamData);
-      } else {
-        return teamData;
-      }
+      positionInfo.employees.push(memberInfo);
+      if (memberInfo.positions === "Engineer") {
+        return promptTeam();
+      } else if (memberInfo.positions === "Intern") {
+        return promptIntern();
+      } else return memberInfo;
     });
 };
+const promptIntern = (intern) => {
+  console.log(`
+=================
+Add Intern
+=================
+`);
 
+  return inquirer.prompt([
+    {
+      type: "input",
+      name: "name3",
+      message: "Please provide member's first name",
+    },
+    {
+      type: "input",
+      name: "id",
+      message: "What is his ID?",
+    },
+    {
+      type: "input",
+      name: "email",
+      message: "What is your team member's email address?",
+    },
+    {
+      type: "input",
+      name: "school",
+      message: "What is team member's school?",
+    },
+  ]);
+  employees.push(intern).then(positionInfo);
+};
 promptManager()
-  .then(promptTeam)
   .then((teamdata) => {
     return generatePage(teamdata);
   })
+
   .then((pageHTML) => {
     return writeFile(pageHTML);
   })
@@ -113,19 +139,6 @@ promptManager()
     console.log(err);
   });
 return copyFile();
-// .then((data)=>{
-//   return generateHTML(data);
-
-// .then((answer) => {
-//   if (answer.positions[0]) {
-//     promptEngineer();
-//   } else if (answer.positions[1]) {
-//     console.log("1");
-//     promptIntern();
-//   } else {
-//     return;
-//   }
-// });
 
 // const pageHTML = generatePage();
 

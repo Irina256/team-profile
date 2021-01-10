@@ -1,15 +1,14 @@
 const generateIcon = (positions) => {
   if (positions === "Engineer") {
-    return `<p><i class="fas fa-glasses"></i> ${positions}</p>`;
+    return `<p><i class="fas fa-glasses"></i> ${positions.positions}</p>`;
   } else if (positions === "Intern") {
-    return `<p><i class="fas fa-user-graduate"></i> ${positions}</p>`;
+    return `<p><i class="fas fa-user-graduate"></i> ${positions.positions}</p>`;
   }
 };
 const generateMembers = (membersArr) => {
   return `
-             ${membersArr
-               .map(({ name2, id, email, github, positions }) => {
-                 return `
+             ${membersArr.map(({ name2, id, email, github }) => {
+               return `
                
                  <div class="col-sm-4">
                  <div class="card" style="width: 22rem;">
@@ -29,16 +28,42 @@ const generateMembers = (membersArr) => {
           </div>
           </div>
           `;
-               })
-
-               .join("")}
+             })}
+  
+        
+    `;
+};
+const generateInterns = (internsArr) => {
+  return `
+             ${internsArr.map(({ name3, id, email, school, positions }) => {
+               return `
+               
+                 <div class="col-sm-4">
+                 <div class="card" style="width: 22rem;">
+            <h2 class="card-header">
+            ${name3}
+           ${generateIcon(positions)}
+              </h2>
+                    <div class="card-body">
+                      <div class="card" style="width: 18rem;">
+                        <ul class="list-group list-group-flush">
+                          <li class="list-group-item">ID: ${id}</li>
+                          <li class="list-group-item">Email: <a href= "mailto:${email}">${email}</a></li>
+                          <li class="list-group-item">School: ${school}</li>
+                        </ul>
+                      </div>
+            </div>
+          </div>
+          </div>
+          `;
+             })}
   
         
     `;
 };
 
 module.exports = (templateData) => {
-  const { members, ...manager } = templateData;
+  const { members, interns, ...manager } = templateData;
 
   return `
   <!DOCTYPE html>
@@ -86,6 +111,7 @@ module.exports = (templateData) => {
   </div>
   </div>
        ${generateMembers(members)}
+       ${generateInterns(interns)}
     </main>
     
     <footer class="container text-center py-3">
