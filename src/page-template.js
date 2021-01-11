@@ -1,70 +1,58 @@
-const generateIcon = (positions) => {
-  if (positions === "Engineer") {
-    return `<p><i class="fas fa-glasses"></i> ${positions.positions}</p>`;
-  } else if (positions === "Intern") {
-    return `<p><i class="fas fa-user-graduate"></i> ${positions.positions}</p>`;
+const logo = (picture) => {
+  if (picture.officenumber) {
+    return ` <p><i class="fas fa-mug-hot"></i>`;
+  }
+  if (picture.school) {
+    return ` <p><i class="fas fa-user-graduate"></i>`;
+  }
+  if (picture.github) {
+    return `<p><i class="fas fa-glasses"></i> `;
+  }
+};
+const user = (empData) => {
+  if (empData.officenumber) {
+    return `<li class="list-group-item"> Office Number: ${empData.officenumber}</li>`;
+  }
+  if (empData.school) {
+    return `<li class="list-group-item"> School: ${empData.school}</li>`;
+  }
+  if (empData.github) {
+    return `<li class="list-group-item"> Github: <a href="https://github.com/${empData.github}">${empData.github}</a></li>`;
   }
 };
 const generateMembers = (membersArr) => {
   return `
-             ${membersArr.map(({ name2, id, email, github }) => {
-               return `
+             ${membersArr
+               .map((newData) => {
+                 return `
                
                  <div class="col-sm-4">
                  <div class="card" style="width: 22rem;">
             <h2 class="card-header">
-            ${name2}
-           ${generateIcon(positions)}
+            ${newData.getname()}
+           ${logo(newData)} ${newData.getRole()}</p>
               </h2>
                     <div class="card-body">
                       <div class="card" style="width: 18rem;">
                         <ul class="list-group list-group-flush">
-                          <li class="list-group-item">ID: ${id}</li>
-                          <li class="list-group-item">Email: <a href= "mailto:${email}">${email}</a></li>
-                          <li class="list-group-item">GitHub: <a href= "https://github.com/${github}">${github}</a></li>
-                        </ul>
+                          <li class="list-group-item"> ${newData.getID()}</li>
+                          <li class="list-group-item"> <a href= "mailto:${newData.getemail()}">${newData.getemail()}</a></li>
+${user(newData)}  
+                      </ul>
                       </div>
             </div>
           </div>
           </div>
           `;
-             })}
-  
-        
-    `;
-};
-const generateInterns = (internsArr) => {
-  return `
-             ${internsArr.map(({ name3, id, email, school, positions }) => {
-               return `
-               
-                 <div class="col-sm-4">
-                 <div class="card" style="width: 22rem;">
-            <h2 class="card-header">
-            ${name3}
-           ${generateIcon(positions)}
-              </h2>
-                    <div class="card-body">
-                      <div class="card" style="width: 18rem;">
-                        <ul class="list-group list-group-flush">
-                          <li class="list-group-item">ID: ${id}</li>
-                          <li class="list-group-item">Email: <a href= "mailto:${email}">${email}</a></li>
-                          <li class="list-group-item">School: ${school}</li>
-                        </ul>
-                      </div>
-            </div>
-          </div>
-          </div>
-          `;
-             })}
+               })
+
+               .join("")}
   
         
     `;
 };
 
 module.exports = (templateData) => {
-  const { members, interns, ...manager } = templateData;
-
   return `
   <!DOCTYPE html>
   <html lang="en">
@@ -89,35 +77,13 @@ module.exports = (templateData) => {
 </header>
 <main class="container my-5">
 <div class="row">
-  <div class="col-sm-4">
-  <div class="card" style="width: 22rem;">
-    <h2 class="card-header">
-    ${manager.name1}
-    <p><i class="fas fa-mug-hot"></i> Manager</p>
-      </h2>
-            <div class="card-body">
-              <div class="card" style="width: 18rem;">
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item">ID: ${manager.id}</li>
-                  <li class="list-group-item">Email: <a href="mailto:${
-                    manager.email
-                  }">${manager.email}</a></li>
-                  <li class="list-group-item">Office Number: ${
-                    manager.office
-                  }</li>
-                </ul>
-              </div>
-    </div>
-  </div>
-  </div>
-       ${generateMembers(members)}
-       ${generateInterns(interns)}
+ 
+       ${generateMembers(templateData)}
+      
     </main>
     
     <footer class="container text-center py-3">
-      <h3 class="text-dark">&copy; ${new Date().getFullYear()} by ${
-    manager.name1
-  }</h3>
+      <h3 class="text-dark">&copy; ${new Date().getFullYear()} </h3>
     </footer>
   </body>
   </html>
